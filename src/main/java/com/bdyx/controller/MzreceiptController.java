@@ -1,5 +1,6 @@
 package com.bdyx.controller;
 
+import com.bdyx.config.Configbase;
 import com.bdyx.entity.Mzreceipt;
 import com.bdyx.mapper.Tkmapper;
 
@@ -19,6 +20,8 @@ import java.util.Map;
 @RequestMapping("/mz")
 public class MzreceiptController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    Configbase configbase;
     @Autowired
     Tkmapper tkmapper;
 
@@ -43,6 +46,8 @@ public class MzreceiptController {
     public Map<String, Object> testPropars() {
         Map<String, Object> stringObjectMap = tkmapper.callPronamesql("exec QRY_MedicalByID 'aaa','60000200'");
         logger.info(stringObjectMap.toString());
+
+        logger.info(configbase.getTesttr());
         return stringObjectMap;
     }
 }
