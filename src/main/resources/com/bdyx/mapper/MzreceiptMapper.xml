@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdyx.mapper.MzreceiptMapper">
+    <resultMap id="BaseResultMap" type="com.bdyx.entity.Mzreceipt">
+        <id column="patient_id" property="patientId" jdbcType="CHAR"/>
+        <id column="ledger_sn" property="ledgerSn" jdbcType="SMALLINT"/>
+        <id column="receipt_sn" property="receiptSn" jdbcType="INTEGER"/>
+        <result column="pay_unit" property="payUnit" jdbcType="VARCHAR"/>
+        <result column="charge_total" property="chargeTotal" jdbcType="DECIMAL"/>
+        <result column="charge_status" property="chargeStatus" jdbcType="CHAR"/>
+        <result column="cash_date" property="cashDate" jdbcType="TIMESTAMP"/>
+        <result column="cash_opera" property="cashOpera" jdbcType="VARCHAR"/>
+        <result column="windows_no" property="windowsNo" jdbcType="TINYINT"/>
+        <result column="report_date" property="reportDate" jdbcType="TIMESTAMP"/>
+        <result column="receipt_no" property="receiptNo" jdbcType="VARCHAR"/>
+        <result column="mz_dept_no" property="mzDeptNo" jdbcType="CHAR"/>
+        <result column="group_date" property="groupDate" jdbcType="TIMESTAMP"/>
+        <result column="contract_code" property="contractCode" jdbcType="VARCHAR"/>
+        <result column="responce_type" property="responceType" jdbcType="CHAR"/>
+        <result column="print_date" property="printDate" jdbcType="TIMESTAMP"/>
+        <result column="print_opera" property="printOpera" jdbcType="VARCHAR"/>
+        <result column="print_report_date" property="printReportDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    patient_id, ledger_sn, receipt_sn, pay_unit, charge_total, charge_status, cash_date, 
+    cash_opera, windows_no, report_date, receipt_no, mz_dept_no, group_date, contract_code, 
+    responce_type, print_date, print_opera, print_report_date
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.bdyx.entity.MzreceiptKey">
+        select
+        <include refid="Base_Column_List"/>
+        from mz_receipt
+        where patient_id = #{patientId,jdbcType=CHAR}
+        and ledger_sn = #{ledgerSn,jdbcType=SMALLINT}
+        and receipt_sn = #{receiptSn,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="com.bdyx.entity.MzreceiptKey">
+    delete from mz_receipt
+    where patient_id = #{patientId,jdbcType=CHAR}
+      and ledger_sn = #{ledgerSn,jdbcType=SMALLINT}
+      and receipt_sn = #{receiptSn,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.bdyx.entity.Mzreceipt">
+    insert into mz_receipt (patient_id, ledger_sn, receipt_sn, 
+      pay_unit, charge_total, charge_status, 
+      cash_date, cash_opera, windows_no, 
+      report_date, receipt_no, mz_dept_no, 
+      group_date, contract_code, responce_type, 
+      print_date, print_opera, print_report_date
+      )
+    values (#{patientId,jdbcType=CHAR}, #{ledgerSn,jdbcType=SMALLINT}, #{receiptSn,jdbcType=INTEGER}, 
+      #{payUnit,jdbcType=VARCHAR}, #{chargeTotal,jdbcType=DECIMAL}, #{chargeStatus,jdbcType=CHAR}, 
+      #{cashDate,jdbcType=TIMESTAMP}, #{cashOpera,jdbcType=VARCHAR}, #{windowsNo,jdbcType=TINYINT}, 
+      #{reportDate,jdbcType=TIMESTAMP}, #{receiptNo,jdbcType=VARCHAR}, #{mzDeptNo,jdbcType=CHAR}, 
+      #{groupDate,jdbcType=TIMESTAMP}, #{contractCode,jdbcType=VARCHAR}, #{responceType,jdbcType=CHAR}, 
+      #{printDate,jdbcType=TIMESTAMP}, #{printOpera,jdbcType=VARCHAR}, #{printReportDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.bdyx.entity.Mzreceipt">
+        insert into mz_receipt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">
+                patient_id,
+            </if>
+            <if test="ledgerSn != null">
+                ledger_sn,
+            </if>
+            <if test="receiptSn != null">
+                receipt_sn,
+            </if>
+            <if test="payUnit != null">
+                pay_unit,
+            </if>
+            <if test="chargeTotal != null">
+                charge_total,
+            </if>
+            <if test="chargeStatus != null">
+                charge_status,
+            </if>
+            <if test="cashDate != null">
+                cash_date,
+            </if>
+            <if test="cashOpera != null">
+                cash_opera,
+            </if>
+            <if test="windowsNo != null">
+                windows_no,
+            </if>
+            <if test="reportDate != null">
+                report_date,
+            </if>
+            <if test="receiptNo != null">
+                receipt_no,
+            </if>
+            <if test="mzDeptNo != null">
+                mz_dept_no,
+            </if>
+            <if test="groupDate != null">
+                group_date,
+            </if>
+            <if test="contractCode != null">
+                contract_code,
+            </if>
+            <if test="responceType != null">
+                responce_type,
+            </if>
+            <if test="printDate != null">
+                print_date,
+            </if>
+            <if test="printOpera != null">
+                print_opera,
+            </if>
+            <if test="printReportDate != null">
+                print_report_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">
+                #{patientId,jdbcType=CHAR},
+            </if>
+            <if test="ledgerSn != null">
+                #{ledgerSn,jdbcType=SMALLINT},
+            </if>
+            <if test="receiptSn != null">
+                #{receiptSn,jdbcType=INTEGER},
+            </if>
+            <if test="payUnit != null">
+                #{payUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="chargeTotal != null">
+                #{chargeTotal,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeStatus != null">
+                #{chargeStatus,jdbcType=CHAR},
+            </if>
+            <if test="cashDate != null">
+                #{cashDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cashOpera != null">
+                #{cashOpera,jdbcType=VARCHAR},
+            </if>
+            <if test="windowsNo != null">
+                #{windowsNo,jdbcType=TINYINT},
+            </if>
+            <if test="reportDate != null">
+                #{reportDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="receiptNo != null">
+                #{receiptNo,jdbcType=VARCHAR},
+            </if>
+            <if test="mzDeptNo != null">
+                #{mzDeptNo,jdbcType=CHAR},
+            </if>
+            <if test="groupDate != null">
+                #{groupDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="contractCode != null">
+                #{contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="responceType != null">
+                #{responceType,jdbcType=CHAR},
+            </if>
+            <if test="printDate != null">
+                #{printDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="printOpera != null">
+                #{printOpera,jdbcType=VARCHAR},
+            </if>
+            <if test="printReportDate != null">
+                #{printReportDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bdyx.entity.Mzreceipt">
+        update mz_receipt
+        <set>
+            <if test="payUnit != null">
+                pay_unit = #{payUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="chargeTotal != null">
+                charge_total = #{chargeTotal,jdbcType=DECIMAL},
+            </if>
+            <if test="chargeStatus != null">
+                charge_status = #{chargeStatus,jdbcType=CHAR},
+            </if>
+            <if test="cashDate != null">
+                cash_date = #{cashDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cashOpera != null">
+                cash_opera = #{cashOpera,jdbcType=VARCHAR},
+            </if>
+            <if test="windowsNo != null">
+                windows_no = #{windowsNo,jdbcType=TINYINT},
+            </if>
+            <if test="reportDate != null">
+                report_date = #{reportDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="receiptNo != null">
+                receipt_no = #{receiptNo,jdbcType=VARCHAR},
+            </if>
+            <if test="mzDeptNo != null">
+                mz_dept_no = #{mzDeptNo,jdbcType=CHAR},
+            </if>
+            <if test="groupDate != null">
+                group_date = #{groupDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="contractCode != null">
+                contract_code = #{contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="responceType != null">
+                responce_type = #{responceType,jdbcType=CHAR},
+            </if>
+            <if test="printDate != null">
+                print_date = #{printDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="printOpera != null">
+                print_opera = #{printOpera,jdbcType=VARCHAR},
+            </if>
+            <if test="printReportDate != null">
+                print_report_date = #{printReportDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where patient_id = #{patientId,jdbcType=CHAR}
+        and ledger_sn = #{ledgerSn,jdbcType=SMALLINT}
+        and receipt_sn = #{receiptSn,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bdyx.entity.Mzreceipt">
+    update mz_receipt
+    set pay_unit = #{payUnit,jdbcType=VARCHAR},
+      charge_total = #{chargeTotal,jdbcType=DECIMAL},
+      charge_status = #{chargeStatus,jdbcType=CHAR},
+      cash_date = #{cashDate,jdbcType=TIMESTAMP},
+      cash_opera = #{cashOpera,jdbcType=VARCHAR},
+      windows_no = #{windowsNo,jdbcType=TINYINT},
+      report_date = #{reportDate,jdbcType=TIMESTAMP},
+      receipt_no = #{receiptNo,jdbcType=VARCHAR},
+      mz_dept_no = #{mzDeptNo,jdbcType=CHAR},
+      group_date = #{groupDate,jdbcType=TIMESTAMP},
+      contract_code = #{contractCode,jdbcType=VARCHAR},
+      responce_type = #{responceType,jdbcType=CHAR},
+      print_date = #{printDate,jdbcType=TIMESTAMP},
+      print_opera = #{printOpera,jdbcType=VARCHAR},
+      print_report_date = #{printReportDate,jdbcType=TIMESTAMP}
+    where patient_id = #{patientId,jdbcType=CHAR}
+      and ledger_sn = #{ledgerSn,jdbcType=SMALLINT}
+      and receipt_sn = #{receiptSn,jdbcType=INTEGER}
+  </update>
+</mapper>
