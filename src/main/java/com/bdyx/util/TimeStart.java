@@ -14,7 +14,7 @@ public class TimeStart {
     @Resource
     private HttpAPIService httpAPIService;
 
-    //配置看地址
+    //配置看地址https://www.jianshu.com/p/1defb0f22ed1
     @Scheduled(fixedRate = 6000)
     private void process() throws Exception {
         log.info("11111");
