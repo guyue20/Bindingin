@@ -1,31 +1,24 @@
 package com.bdyx.controller;
-
 import com.alibaba.fastjson.JSONObject;
 import com.bdyx.config.Configbase;
 import com.bdyx.entity.Mzreceipt;
 import com.bdyx.http.HttpResult;
 import com.bdyx.mapper.Tkmapper;
-
-
-import com.bdyx.service.HttpAPIService;
-import com.fasterxml.jackson.core.JsonParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.bdyx.service.HttpAPIService;;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-
+@Log4j
 @Controller
 @RequestMapping("/mz")
 public class MzreceiptController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    //    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     private HttpAPIService httpAPIService;
     @Autowired
@@ -38,23 +31,25 @@ public class MzreceiptController {
     public List<Mzreceipt> getList() {
         //callProname
         List<Mzreceipt> list = tkmapper.getList("14", "1", "02429");
-
         return list;
     }
-
     @RequestMapping("/testpro")
     @ResponseBody
     public Map<String, Object> testPro() {
         Map<String, Object> qry_medicalByID = tkmapper.callProname("QRY_MedicalByID", "'aaa','60000200'");
+        log.info(qry_medicalByID);
         return qry_medicalByID;
     }
 
-    @RequestMapping(value = "/testpropars", method = {RequestMethod.POST})
+    //@RequestBody接body参数 @RequestHead 接收head参数 request
+    @RequestMapping(value = "/testpropars", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Map<String, Object> testPropars() {
+    public Map<String, Object> testPropars(@RequestParam("head") String headstr, @RequestParam("body") String bodystr) {
+        JSONObject head = JSONObject.parseObject(headstr);
+        JSONObject body = JSONObject.parseObject(bodystr);
+        log.info(head);
+        log.info(body);
         Map<String, Object> stringObjectMap = tkmapper.callPronamesql("exec QRY_MedicalByID 'aaa','60000200'");
-        logger.info(stringObjectMap.toString());
-        logger.info(configbase.getTesttr());
         return stringObjectMap;
     }
 

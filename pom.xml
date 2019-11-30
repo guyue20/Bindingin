@@ -115,8 +115,8 @@
                     <overwrite>true</overwrite>
                 </configuration>
             </plugin>
-            <!--**********分离资源文件及依赖包打包配置*************-->
-            <!--java -jar -Dloader.path=resources,lib XXX.jar-->
+            <!--&lt;!&ndash;**********分离资源文件及依赖包打包配置*************&ndash;&gt;-->
+            <!--&lt;!&ndash;java -jar -Dloader.path=resources,lib XXX.jar&ndash;&gt;-->
             <!--<plugin>-->
             <!--<groupId>org.apache.maven.plugins</groupId>-->
             <!--<artifactId>maven-dependency-plugin</artifactId>-->
@@ -234,7 +234,6 @@
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
-
         </plugins>
 
     </build>
