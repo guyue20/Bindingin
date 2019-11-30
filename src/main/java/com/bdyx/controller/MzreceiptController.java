@@ -1,4 +1,5 @@
 package com.bdyx.controller;
+
 import com.alibaba.fastjson.JSONObject;
 import com.bdyx.config.Configbase;
 import com.bdyx.entity.Mzreceipt;
@@ -33,6 +34,7 @@ public class MzreceiptController {
         List<Mzreceipt> list = tkmapper.getList("14", "1", "02429");
         return list;
     }
+
     @RequestMapping("/testpro")
     @ResponseBody
     public Map<String, Object> testPro() {
