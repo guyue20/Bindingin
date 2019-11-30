@@ -1,4 +1,4 @@
-package com.bdyx;
+package com.bdyx.util;
 
 import com.bdyx.http.HttpResult;
 import com.bdyx.service.HttpAPIService;
