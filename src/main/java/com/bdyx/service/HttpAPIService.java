@@ -1,5 +1,6 @@
 package com.bdyx.service;
 
+import com.bdyx.http.HttpResult;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
