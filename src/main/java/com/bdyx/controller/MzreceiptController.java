@@ -42,13 +42,14 @@ public class MzreceiptController {
     }
 
     //@RequestBody接body参数 @RequestHead 接收head参数 request
+    //@RequestParam("head") String headstr, @RequestParam("body") String bodystr
     @RequestMapping(value = "/testpropars", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Map<String, Object> testPropars(@RequestParam("head") String headstr, @RequestParam("body") String bodystr) {
-        JSONObject head = JSONObject.parseObject(headstr);
-        JSONObject body = JSONObject.parseObject(bodystr);
-        log.info(head);
-        log.info(body);
+    public Map<String, Object> testPropars() {
+//        JSONObject head = JSONObject.parseObject(headstr);
+//        JSONObject body = JSONObject.parseObject(bodystr);
+//        log.info(head);
+//        log.info(body);
         Map<String, Object> stringObjectMap = tkmapper.callPronamesql("exec QRY_MedicalByID 'aaa','60000200'");
         return stringObjectMap;
     }
