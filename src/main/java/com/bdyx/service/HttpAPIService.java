@@ -62,17 +62,14 @@ public class HttpAPIService {
      */
     public String doGet(String url, Map<String, Object> map) throws Exception {
         URIBuilder uriBuilder = new URIBuilder(url);
-
         if (map != null) {
             // 遍历map,拼接请求参数
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 uriBuilder.setParameter(entry.getKey(), entry.getValue().toString());
             }
         }
-
         // 调用不带参数的get请求
         return this.doGet(uriBuilder.build().toString());
-
     }
 
     /**
@@ -107,7 +104,6 @@ public class HttpAPIService {
         return new HttpResult(response.getStatusLine().getStatusCode(), EntityUtils.toString(
                 response.getEntity(), "UTF-8"));
     }
-
     /**
      * 不带参数post请求
      *
