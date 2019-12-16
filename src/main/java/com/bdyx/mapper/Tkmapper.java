@@ -18,4 +18,10 @@ public interface Tkmapper extends Mapper<Mzreceipt>, MySqlMapper<Mzreceipt> {
 
     @Select("${pronamesql}")
     Map<String, Object> callPronamesql(@Param("pronamesql") String pronamesql);
+
+    @Select("${allselectandupdate}")
+    void allselectandupdate(@Param("allselectandupdate") String allselectandupdate);
+
+    @Select("${getprpString}")
+    String getprpString(@Param("getprpString") String getprpString);
 }

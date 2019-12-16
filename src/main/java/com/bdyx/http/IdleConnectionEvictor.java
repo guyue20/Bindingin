@@ -9,14 +9,11 @@ public class IdleConnectionEvictor extends Thread {
 
     @Autowired
     private HttpClientConnectionManager connMgr;
-
     private volatile boolean shutdown;
-
     public IdleConnectionEvictor() {
         super();
         super.start();
     }
-
     @Override
     public void run() {
         try {

@@ -84,14 +84,11 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -121,8 +118,10 @@
                     <overwrite>true</overwrite>
                 </configuration>
             </plugin>
-            <!--&lt;!&ndash;**********分离资源文件及依赖包打包配置*************&ndash;&gt;-->
-            <!--&lt;!&ndash;java -jar -Dloader.path=resources,lib XXX.jar&ndash;&gt;-->
+            <!--从下开始注解-->
+            <!--**********分离资源文件及依赖包打包配置*************-->
+            <!--chcp 65001-->
+            <!--java -jar -Dloader.path=resources,lib XXX.jar-->
             <!--<plugin>-->
             <!--<groupId>org.apache.maven.plugins</groupId>-->
             <!--<artifactId>maven-dependency-plugin</artifactId>-->
