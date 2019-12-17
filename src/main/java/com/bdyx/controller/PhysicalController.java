@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.util.StringUtil;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,6 @@ import java.util.*;
 public class PhysicalController extends BaseController {
     @Autowired
     Tkmapper tkmapper;
-
 
     /**
      * 体检中心有患者进行体检时，将患者基本信息提交给HIS(过程：p_wa_patient_mi)
@@ -53,6 +53,12 @@ public class PhysicalController extends BaseController {
         String interfaceName = resultMap.get("interfaceName").toString();//获取接口参数
         //执行业务
         JSONObject json = JSON.parseObject(body);
+        //数据校验
+        Map<String, HisResponse> excetionmap = getExcetionvisitSave(json, decodeHead);
+        if (excetionmap.get("resolecode") != null) {
+            //返回异常
+            return excetionmap.get("resolecode");
+        }
         List<String> params = new ArrayList<String>();
         String patient_id = json.getString("patient_id");//门诊号
         params.add(patient_id);
@@ -74,10 +80,8 @@ public class PhysicalController extends BaseController {
         params.add(response_type);
         String apply_opera = json.getString("apply_opera");//申请人
         params.add(apply_opera);
-
         String flag = json.getString("flag");//团检个标识
         params.add(flag);
-
         String employer_name = json.getString("employer_name");// 单位名称
         params.add(employer_name);
         log.info("参数");
@@ -101,7 +105,7 @@ public class PhysicalController extends BaseController {
             log.info(hsql);
             Map<String, Object> mess = tkmapper.callPronamesql(hsql);
             bodyMap.put("code", 1);
-            bodyMap.put("msg", "检查申请取消");
+            bodyMap.put("msg", "建党");
             bodyMap.put("items", mess);
             logbody = bodyMap.toString();
         } catch (Exception e) {
@@ -138,6 +142,12 @@ public class PhysicalController extends BaseController {
         String interfaceName = resultMap.get("interfaceName").toString();//获取接口参数
         //执行业务
         JSONObject json = JSON.parseObject(body);
+        //数据校验
+        Map<String, HisResponse> excetionmap = getExcetionchargeApply(json, decodeHead);
+        if (excetionmap.get("resolecode") != null) {
+            //返回异常
+            return excetionmap.get("resolecode");
+        }
         List<String> params = new ArrayList<String>();
         String patient_id = json.getString("patient_id");//门诊号
         params.add(patient_id);
@@ -151,11 +161,10 @@ public class PhysicalController extends BaseController {
         params.add(apply_opera);
         String flag = json.getString("flag");//检查检验标志
         params.add(flag);
-        String codejc = json.getString("code");//检查检验标志
+        String codejc = json.getString("code");//编码
         params.add(codejc);
         String charge_total = json.getString("charge_total");//总金额
         params.add(charge_total);
-
         log.info("参数");
         log.info("通知医院HIS同步体检患者基本信息basic/visitsave接口入参：" + params);
         Map<String, Object> bodyMap = new HashMap<String, Object>();
@@ -172,15 +181,13 @@ public class PhysicalController extends BaseController {
         String logbody = "";
         try {
             String hsql = "exec p_wa_charge_apply '" + patient_id + "','" + times + "','" + charge_no
-                    + "','" + apply_unit + "','" + apply_opera + "','" + flag + "','" + code + "','" + charge_total + "'";
+                    + "','" + apply_unit + "','" + apply_opera + "','" + flag + "','" + codejc + "','" + charge_total + "'";
             log.info(hsql);
             Map<String, Object> mess = tkmapper.callPronamesql(hsql);
             //执行另外一个存储过程
-
             String sql = "exec p_wa_charge_to_detail '" + patient_id + "','" + charge_no + "','" + charge_total + "'";
             log.info(sql);
             // Map<String, Object> messsql=tkmapper.callPronamesql(sql);
-
             bodyMap.put("code", 1);
             bodyMap.put("msg", "检查申请取消");
             bodyMap.put("items", mess);
@@ -197,7 +204,6 @@ public class PhysicalController extends BaseController {
             return hr;
         }
     }
-
     //退费申请
     @RequestMapping("/app/cancel/apply")
     @ResponseBody
@@ -219,6 +225,12 @@ public class PhysicalController extends BaseController {
         String interfaceName = resultMap.get("interfaceName").toString();//获取接口参数
         //执行业务
         JSONObject json = JSON.parseObject(body);
+        //数据校验
+        Map<String, HisResponse> excetionmap = getExcetioncancelApply(json, decodeHead);
+        if (excetionmap.get("resolecode") != null) {
+            //返回异常
+            return excetionmap.get("resolecode");
+        }
         List<String> params = new ArrayList<String>();
         String charge_no = json.getString("charge_no");//申请单号
         params.add(charge_no);
@@ -268,10 +280,17 @@ public class PhysicalController extends BaseController {
         }
         String head = resultMap.get("head").toString();
         String body = resultMap.get("body").toString();
+
         String id = resultMap.get("id").toString();//获取日志表中的主键（uuid）
         String interfaceName = resultMap.get("interfaceName").toString();//获取接口参数
         //执行业务
         JSONObject json = JSON.parseObject(body);
+        //数据校验
+        Map<String, HisResponse> excetionmap = getExcetioncancelApply(json, decodeHead);
+        if (excetionmap.get("resolecode") != null) {
+            //返回异常
+            return excetionmap.get("resolecode");
+        }
         List<String> params = new ArrayList<String>();
         String charge_no = json.getString("charge_no");//申请单号
         params.add(charge_no);
@@ -301,6 +320,197 @@ public class PhysicalController extends BaseController {
             HisResponse hr = new HisResponse(decodeHead, bodyMap);
             return hr;
         }
+    }
+
+    public Map<String, HisResponse> getExcetionvisitSave(JSONObject json, String decodeHead) {
+        HashMap<String, HisResponse> returnmap = new HashMap<>();
+        //数据校验
+//        if (StringUtil.isEmpty(json.getString("patient_id"))) {
+//            JSONObject object = new JSONObject();
+//            object.put("code", "0");
+//            object.put("msg", "门诊号异常");
+//            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+//            returnmap.put("resolecode", hr);
+//            return returnmap;
+//        }
+        if (StringUtil.isEmpty(json.getString("apply_unit"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请科室异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("apply_opera"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请人异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("flag"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "检查检验标志异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("social_no"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "证件号码异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("name"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "姓名异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("sex"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "性别异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("birth_place"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "联系地址异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("birthday"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "出生日期异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("tel"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "电话异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("response_type"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "患者类别");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("employer_name"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "单位名称");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        returnmap.put("resolecode", null);
+        return returnmap;
+    }
+
+    public Map<String, HisResponse> getExcetionchargeApply(JSONObject json, String decodeHead) {
+        HashMap<String, HisResponse> returnmap = new HashMap<>();
+        //数据校验
+        if (StringUtil.isEmpty(json.getString("charge_no"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请单号异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+
+        if (StringUtil.isEmpty(json.getString("times"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "就诊次数异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("apply_unit"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请科室异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("apply_opera"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请人异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("flag"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "检查检验标志异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("code"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "编码异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("charge_total"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "总金额");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        returnmap.put("resolecode", null);
+        return returnmap;
+    }
+
+    //cancelApply
+    public Map<String, HisResponse> getExcetioncancelApply(JSONObject json, String decodeHead) {
+        HashMap<String, HisResponse> returnmap = new HashMap<>();
+        //数据校验
+        if (StringUtil.isEmpty(json.getString("charge_no"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请单号异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        if (StringUtil.isEmpty(json.getString("apply_opera"))) {
+            JSONObject object = new JSONObject();
+            object.put("code", "0");
+            object.put("msg", "申请人异常");
+            HisResponse hr = new HisResponse(decodeHead, JSONObject.toJSON(object));
+            returnmap.put("resolecode", hr);
+            return returnmap;
+        }
+        returnmap.put("resolecode", null);
+        return returnmap;
     }
 
 }

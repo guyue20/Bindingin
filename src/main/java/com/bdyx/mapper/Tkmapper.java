@@ -23,5 +23,5 @@ public interface Tkmapper extends Mapper<Mzreceipt>, MySqlMapper<Mzreceipt> {
     void allselectandupdate(@Param("allselectandupdate") String allselectandupdate);
 
     @Select("${getprpString}")
-    String getprpString(@Param("getprpString") String getprpString);
+    List<Map<String, Object>> getprpString(@Param("getprpString") String getprpString);
 }
