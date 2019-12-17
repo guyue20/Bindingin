@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bdyx.service.CommonService;
 import com.bdyx.util.YuYueUtil;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.util.StringUtils;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Log4j
 public class BaseController {
     @Autowired
     CommonService commonService;
@@ -60,6 +62,7 @@ public class BaseController {
         //解析请求参数----begin----
         String decodeHead = request.getParameter("head");
         String decodeBody = request.getParameter("body");
+
         String decodeVisit = "";
         String decodeReceiptCharge = "";
         if ("pay/scanpay".equals(interfaceName)) {
@@ -99,10 +102,12 @@ public class BaseController {
                 return result;
             }
         }
-        //String head = YuYueUtil.decode(decodeHead);
-        //String body = YuYueUtil.decode(decodeBody);
-        String head = decodeHead;
-        String body = decodeBody;
+        String head = YuYueUtil.decode(decodeHead);
+        String body = YuYueUtil.decode(decodeBody);
+        log.info("head" + head);
+        log.info("body" + body);
+        // String head = decodeHead;
+        // String body = decodeBody;
         String visit = "";
         String ReceiptCharge = "";
         if ("pay/scanpay".equals(interfaceName)) {

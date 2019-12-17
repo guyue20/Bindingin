@@ -4,20 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bdyx.entity.HisResponse;
 import com.bdyx.mapper.Tkmapper;
-
 import com.bdyx.util.PhysicalCheckUtil;
 import com.bdyx.util.YuYueUtil;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.util.StringUtil;
 
-
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.*;
 
 @Log4j
@@ -33,7 +29,7 @@ public class PhysicalController extends BaseController {
      * @return
      */
     //建党接口
-    @RequestMapping("/app/basic/visitsave")
+    @RequestMapping("/basic/visitsave")
     @ResponseBody
     public HisResponse visitSave(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = getResultMapDebug(request, deBug);//分解参数、校验参数
@@ -122,7 +118,7 @@ public class PhysicalController extends BaseController {
     }
 
     //收费申请
-    @RequestMapping("/app/charge/apply")
+    @RequestMapping("/charge/apply")
     @ResponseBody
     public HisResponse chargeApply(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = getResultMapDebug(request, deBug);//分解参数、校验参数
@@ -159,12 +155,20 @@ public class PhysicalController extends BaseController {
         params.add(apply_unit);
         String apply_opera = json.getString("apply_opera");//申请人
         params.add(apply_opera);
-        String flag = json.getString("flag");//检查检验标志
-        params.add(flag);
-        String codejc = json.getString("code");//编码
-        params.add(codejc);
         String charge_total = json.getString("charge_total");//总金额
         params.add(charge_total);
+
+        String flags = json.getString("flag");//检查检验标志
+        params.add(flags);
+        String codes = json.getString("code");//编码
+        params.add(codes);
+        String charge_singles = json.getString("charge_single");//单项金额
+        params.add(charge_singles);
+        //对上边的参数进行分割 截取非空字符
+        //String trim = codes.trim().split(",");
+        String[] codearr = codes.trim().split("|");
+        String[] flagsarr = flags.trim().split("|");
+        String[] charge_singlearr = charge_singles.trim().split("|");
         log.info("参数");
         log.info("通知医院HIS同步体检患者基本信息basic/visitsave接口入参：" + params);
         Map<String, Object> bodyMap = new HashMap<String, Object>();
@@ -180,14 +184,17 @@ public class PhysicalController extends BaseController {
         }
         String logbody = "";
         try {
-            String hsql = "exec p_wa_charge_apply '" + patient_id + "','" + times + "','" + charge_no
-                    + "','" + apply_unit + "','" + apply_opera + "','" + flag + "','" + codejc + "','" + charge_total + "'";
-            log.info(hsql);
-            Map<String, Object> mess = tkmapper.callPronamesql(hsql);
+            for (int i = 0; i < codearr.length; i++) {
+                String hsql = "exec p_wa_charge_apply '" + patient_id + "','" + times + "','" + charge_no
+                        + "','" + apply_unit + "','" + apply_opera + "','" + flagsarr[i] + "','" + codearr[i] + "','" + charge_total + "'";
+                log.info(hsql);
+                Map<String, Object> mess = tkmapper.callPronamesql(hsql);
+                log.info(mess);
+            }
             //执行另外一个存储过程
             String sql = "exec p_wa_charge_to_detail '" + patient_id + "','" + charge_no + "','" + charge_total + "'";
             log.info(sql);
-            // Map<String, Object> messsql=tkmapper.callPronamesql(sql);
+            Map<String, Object> mess = tkmapper.callPronamesql(sql);
             bodyMap.put("code", 1);
             bodyMap.put("msg", "检查申请取消");
             bodyMap.put("items", mess);
@@ -204,8 +211,9 @@ public class PhysicalController extends BaseController {
             return hr;
         }
     }
+
     //退费申请
-    @RequestMapping("/app/cancel/apply")
+    @RequestMapping("/cancel/apply")
     @ResponseBody
     public HisResponse cancelApply(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = getResultMapDebug(request, deBug);//分解参数、校验参数
@@ -264,7 +272,7 @@ public class PhysicalController extends BaseController {
     }
 
     //撤销收费申请
-    @RequestMapping("/app/charge/cancel")
+    @RequestMapping("/charge/cancel")
     @ResponseBody
     public HisResponse chargeCancel(HttpServletRequest request) throws Exception {
         Map<String, Object> resultMap = getResultMapDebug(request, deBug);//分解参数、校验参数
@@ -436,7 +444,6 @@ public class PhysicalController extends BaseController {
             returnmap.put("resolecode", hr);
             return returnmap;
         }
-
         if (StringUtil.isEmpty(json.getString("times"))) {
             JSONObject object = new JSONObject();
             object.put("code", "0");
@@ -512,5 +519,4 @@ public class PhysicalController extends BaseController {
         returnmap.put("resolecode", null);
         return returnmap;
     }
-
 }

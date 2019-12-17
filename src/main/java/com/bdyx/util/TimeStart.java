@@ -43,10 +43,14 @@ public class TimeStart {
             for (int i = 0; i < chargeNos.size(); i++) {
                 JSONObject resjson = new JSONObject();
                 Map<String, Object> map1 = chargeNos.get(i);
-                // String charge_no = map1.get("charge_no").toString();
-                resjson.put("charge_no", map1.get("charge_no").toString());
+                resjson.put("charge_no", map1.get("charge_no").toString());  //申请单号
+                resjson.put("charge_date", map1.get("charge_date").toString());//收费时间
+                resjson.put("charge_opera", map1.get("charge_opera").toString());//收费人
+                resjson.put("charge_price", map1.get("charge_price").toString());//收费价格
+                resjson.put("Invoice_number", map1.get("Invoice_number").toString());//发票号
                 resjson.put("status", "1");   //默认1；
-                log.info(bsUrl);
+                log.info("请求地址    " + bsUrl);
+                log.info("请求参数    " + resjson);
                 HttpResult httpResult = httpAPIService.doPost(bsUrl, resjson);
                 if (httpResult.getCode() == 0) {
                     //成功
@@ -58,7 +62,7 @@ public class TimeStart {
                 }
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }

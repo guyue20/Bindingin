@@ -102,7 +102,6 @@ public class YuYueUtil {
         JSONObject bodyJson = JSON.parseObject(body);
         String opera = bodyJson.getString("userid");
         log.info("-------------进入head校验-------------");
-
         JSONObject headJson = JSON.parseObject(head);
         String token = headJson.getString("token");
         String fromtype = headJson.getString("fromtype");
